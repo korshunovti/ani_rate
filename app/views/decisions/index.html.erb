@@ -1,0 +1,97 @@
+<div class="pill">
+  <span>👤</span>
+  <span><%= t("ui.signed_in_as", email: current_user.email) %></span>
+</div>
+
+
+    <h1 class="h1"><%= t("app.name", default: "AniRate") %></h1>
+    <p class="muted"><%= t("ui.tagline") %></p>
+
+    <div class="card" style="margin-top:14px;">
+      <div class="row">
+        <label><%= t("ui.genre", default: "Genre") %>:</label>
+
+        <div class="theme-chips" id="themeChips">
+        <button type="button" class="chip is-active" data-theme="random">
+            🎲 <%= t("ui.random", default: "Random") %>
+        </button>
+
+        <% Anime.distinct.order(:genre).pluck(:genre).each do |g| %>
+            <button type="button" class="chip" data-theme="<%= g %>">
+            <%= t("genres.#{g}", default: g) %>
+            </button>
+        <% end %>
+        </div>
+        <input type="hidden" id="themeSelect" value="random" />
+        <button id="nextBtn" class="btn primary"><%= t("ui.next_image", default: "Next anime") %></button>
+        <button id="skipBtn" class="btn ghost"><%= t("ui.skip", default: "Skip") %></button>
+        <span id="status" class="muted small"></span>
+      </div>
+    </div>
+
+    <div id="dishCard" class="card" style="display:none; margin-top:14px;">
+      <div class="row" style="justify-content:space-between; align-items:center;">
+        <div class="row" style="gap:10px; align-items:center;">
+          <h2 id="dishTitle" style="margin:0;"></h2>
+          <span id="themeBadge" class="pill"></span>
+        </div>
+      </div>
+
+      <div class="image-wrap">
+        <button id="favBtn" class="fav-star" type="button" aria-label="Favorite" title="Favorite">★</button>
+        <img id="dishImage" class="image" alt="anime poster" />
+      </div>
+
+      <div class="kpis">
+        <div class="kpi" id="avgKpi">Avg: —</div>
+        <div class="kpi" id="myKpi">My rating: —</div>
+      </div>
+
+      <p id="dishMeta" class="muted small" style="margin-top:10px;"></p>
+
+      <div class="rate-group">
+        <span class="muted"><%= t("ui.expert_rating", default: "Your rating") %>:</span>
+        <% (1..5).each do |s| %>
+          <button class="btn rate-btn" data-score="<%= s %>"><%= s %></button>
+        <% end %>
+        <span id="ratingInfo" class="muted small"></span>
+      </div>
+    </div>
+
+    <script>
+  window.CSRF_TOKEN = "<%= form_authenticity_token %>";
+  window.API_NEXT_URL = "<%= api_animes_next_path %>";
+  window.API_RATINGS_URL = "<%= api_ratings_path %>";
+  window.API_FAVORITES_TOGGLE_URL = "<%= api_favorites_toggle_path %>";
+
+  window.I18N_LOADING = "<%= t('ui.loading', default: 'Loading...') %>";
+  window.I18N_SAVED   = "<%= t('ui.saved', default: 'Saved') %>";
+  window.I18N_ERROR   = "<%= t('ui.error', default: 'Error') %>";
+  window.I18N_NO_DISH = "<%= t('ui.no_dish', default: 'No anime') %>";
+  window.I18N_API_JS_ERROR = "<%= t('ui.api_js_error', default: 'API/JS error (see console)') %>";
+
+  window.I18N_AVG_LABEL = "<%= t('ui.avg', default: 'Avg') %>";
+  window.I18N_MY_LABEL  = "<%= t('ui.my_rating', default: 'My rating') %>";
+
+  window.I18N_META = "<%= t('ui.meta',
+    default: 'Genre: %{theme} | Avg: %{avg} | My rating: %{my}',
+    theme: '%{theme}', avg: '%{avg}', my: '%{my}') %>";
+
+  window.I18N_THEMES = <%= {
+    "shonen" => t("genres.shonen", default: "shonen"),
+    "shoujo" => t("genres.shoujo", default: "shoujo"),
+    "mecha" => t("genres.mecha", default: "mecha"),
+    "fantasy" => t("genres.fantasy", default: "fantasy"),
+    "romance" => t("genres.romance", default: "romance")
+  }.to_json.html_safe %>;
+</script>
+
+<div style="margin-top:14px;">
+  <div class="pill">💡 Tip</div>
+  <p class="muted small" style="margin-top:8px;">
+    <%= t("ui.tip") %>
+  </p>
+</div>
+
+</section>
+</div>

@@ -1,0 +1,75 @@
+<section class="card soft">
+  <h1 class="h1" style="margin-bottom:6px;"><%= t("ui.my_ratings", default: "My ratings") %></h1>
+  <p class="muted"><%= t("ui.stats", default: "Stats") %></p>
+
+  <% if @total.to_i == 0 %>
+    <div class="flash"><%= t("ui.no_ratings_yet", default: "No ratings yet. Go rate some anime 🙂") %></div>
+  <% else %>
+    <div class="kpis" style="margin-top:12px;">
+      <div class="kpi"><%= t("ui.total_ratings", default: "Total ratings") %>: <strong><%= @total %></strong></div>
+      <div class="kpi"><%= t("ui.your_avg", default: "Your average") %>: <strong><%= (@your_avg || 0).round(2) %></strong></div>
+    </div>
+
+    <div class="card" style="margin-top:14px;">
+      <h3 style="margin:0 0 10px;"><%= t("ui.by_category", default: "By genre") %></h3>
+
+      <table style="width:100%; border-collapse:collapse;">
+        <thead>
+          <tr class="muted small" style="text-align:left;">
+            <th style="padding:10px 8px;"><%= t("ui.category", default: "Genre") %></th>
+            <th style="padding:10px 8px;"><%= t("ui.count", default: "Count") %></th>
+            <th style="padding:10px 8px;"><%= t("ui.avg", default: "Avg") %></th>
+            <th style="padding:10px 8px;"><%= t("ui.global_avg", default: "Global avg") %></th>
+          </tr>
+        </thead>
+        <tbody>
+          <% (@avg_by_genre || {}).sort_by { |(_, avg)| -(avg || 0).to_f }.each do |genre, avg| %>
+            <% cnt = (@count_by_genre || {})[genre] || 0 %>
+            <% gavg = (@global_by_genre || {})[genre] %>
+
+            <tr style="border-top:1px solid rgba(255,255,255,0.08);">
+              <td style="padding:10px 8px;">
+                <span class="pill">#<%= t("genres.#{genre}", default: genre) %></span>
+              </td>
+              <td style="padding:10px 8px;"><%= cnt %></td>
+              <td style="padding:10px 8px;"><%= (avg || 0).round(2) %></td>
+              <td style="padding:10px 8px;"><%= gavg ? gavg.round(2) : "—" %></td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="card" style="margin-top:14px;">
+      <h3 style="margin:0 0 10px;"><%= t("ui.last_ratings", default: "Latest ratings") %></h3>
+
+      <table style="width:100%; border-collapse:collapse;">
+        <thead>
+          <tr class="muted small" style="text-align:left;">
+            <th style="padding:10px 8px;"><%= t("ui.dish", default: "Anime") %></th>
+            <th style="padding:10px 8px;"><%= t("ui.category", default: "Genre") %></th>
+            <th style="padding:10px 8px;"><%= t("ui.score", default: "Score") %></th>
+            <th style="padding:10px 8px;"><%= t("ui.rated_at", default: "Rated at") %></th>
+          </tr>
+        </thead>
+        <tbody>
+          <% (@latest || []).each do |r| %>
+            <% g = r.anime&.genre.to_s %>
+            <tr style="border-top:1px solid rgba(255,255,255,0.08);">
+              <td style="padding:10px 8px;"><%= r.anime&.title %></td>
+              <td style="padding:10px 8px;">
+                <span class="pill">#<%= t("genres.#{g}", default: g) %></span>
+              </td>
+              <td style="padding:10px 8px;"><strong><%= r.score %></strong></td>
+              <td style="padding:10px 8px;" class="muted small"><%= r.created_at.strftime("%Y-%m-%d %H:%M") %></td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+
+      <div class="muted small" style="margin-top:10px;">
+        <%= t("ui.total_ratings", default: "Total ratings") %>: <%= @total %>
+      </div>
+    </div>
+  <% end %>
+</section>

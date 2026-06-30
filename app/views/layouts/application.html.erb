@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>AniRate</title>
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+
+    <%= csrf_meta_tags %>
+    <%= csp_meta_tag %>
+
+    <%= stylesheet_link_tag "application", "data-turbo-track": "reload" %>
+    <%= javascript_importmap_tags %>
+  </head>
+
+  <body>
+    <header class="topbar">
+      <div class="brand">
+        <div class="brand-badge"></div>
+        <%= link_to t("app.name", default: "AniRate"), root_path, class: "brand-link" %>
+
+        <% if user_signed_in? %>
+          <span class="brand-sep">|</span>
+          <%= link_to t("ui.my_ratings", default: "My ratings"), ratings_path, class: "brand-nav-link" %>
+          <%= link_to t("ui.favorites", default: "Favorites"), favorites_path, class: "brand-nav-link" %>
+        <% end %>
+      </div>
+
+      <nav class="nav">
+        <%= link_to "🇷🇺", switch_locale_url("ru"), class: "btn ghost", title: "Русский", aria: { label: "Русский" } %>
+        <%= link_to "🇬🇧", switch_locale_url("en"), class: "btn ghost", title: "English", aria: { label: "English" } %>
+
+        <% if user_signed_in? %>
+          <%= button_to t("ui.logout", default: "Logout"),
+                        destroy_user_session_path,
+                        method: :delete,
+                        class: "btn danger" %>
+        <% end %>
+      </nav>
+    </header>
+
+    <main class="container">
+      <% if notice.present? %>
+        <div class="flash"><%= notice %></div>
+      <% end %>
+      <% if alert.present? %>
+        <div class="flash"><%= alert %></div>
+      <% end %>
+
+      <%= yield %>
+    </main>
+  </body>
+</html>
